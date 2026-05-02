@@ -38,7 +38,7 @@ const fakeUsers = [
 const server = setupServer(
   http.get("https://dummyjson.com/users", () => {
     return HttpResponse.json({ users: fakeUsers });
-  })
+  }),
 );
 
 beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
@@ -59,7 +59,9 @@ describe("<Users />", () => {
     expect(screen.getAllByTestId("user-card")).toHaveLength(fakeUsers.length);
 
     fakeUsers.forEach((user) => {
-      expect(screen.getByRole("heading", { level: 3, name: user.name })).toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", { level: 3, name: user.name }),
+      ).toBeInTheDocument();
       expect(screen.getByText(new RegExp(user.email))).toBeInTheDocument();
       expect(screen.getByText(new RegExp(`${user.age}`))).toBeInTheDocument();
     });
@@ -69,7 +71,7 @@ describe("<Users />", () => {
     server.use(
       http.get("https://dummyjson.com/users", () => {
         return HttpResponse.json({}, { status: 500 });
-      })
+      }),
     );
     render(<Users />);
     await waitForElementToBeRemoved(() => screen.getByTestId("loading-state"));
@@ -81,7 +83,7 @@ describe("<Users />", () => {
     server.use(
       http.get("https://dummyjson.com/users", () => {
         return HttpResponse.json({ users: [] });
-      })
+      }),
     );
     render(<Users />);
     await waitForElementToBeRemoved(() => screen.getByTestId("loading-state"));
@@ -96,7 +98,9 @@ describe("<Users />", () => {
     fireEvent.change(searchInput, { target: { value: "Alice" } });
 
     expect(screen.getAllByTestId("user-card")).toHaveLength(1);
-    expect(screen.getByRole("heading", { level: 3, name: "Alice Johnson" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { level: 3, name: "Alice Johnson" }),
+    ).toBeInTheDocument();
   });
 
   test("filters users by search term (email)", async () => {
@@ -107,7 +111,9 @@ describe("<Users />", () => {
     fireEvent.change(searchInput, { target: { value: "bob@example" } });
 
     expect(screen.getAllByTestId("user-card")).toHaveLength(1);
-    expect(screen.getByRole("heading", { level: 3, name: "Bob Smith" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { level: 3, name: "Bob Smith" }),
+    ).toBeInTheDocument();
   });
 
   test("filters users by minimum age", async () => {
@@ -118,8 +124,12 @@ describe("<Users />", () => {
     fireEvent.change(ageInput, { target: { value: "30" } });
 
     expect(screen.getAllByTestId("user-card")).toHaveLength(2);
-    expect(screen.getByRole("heading", { level: 3, name: "Bob Smith" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { level: 3, name: "David Wilson" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { level: 3, name: "Bob Smith" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { level: 3, name: "David Wilson" }),
+    ).toBeInTheDocument();
   });
 
   test("filters users by both search term and age", async () => {
@@ -133,7 +143,9 @@ describe("<Users />", () => {
     fireEvent.change(ageInput, { target: { value: "40" } });
 
     expect(screen.getAllByTestId("user-card")).toHaveLength(1);
-    expect(screen.getByRole("heading", { level: 3, name: "David Wilson" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { level: 3, name: "David Wilson" }),
+    ).toBeInTheDocument();
   });
 
   test("displays 'no results' message when filters return no matches", async () => {
@@ -151,12 +163,16 @@ describe("<Users />", () => {
     render(<Users />);
     await waitForElementToBeRemoved(() => screen.getByTestId("loading-state"));
 
-    expect(screen.getByTestId("result-count")).toHaveTextContent("Found 4 users");
+    expect(screen.getByTestId("result-count")).toHaveTextContent(
+      "Found 4 users",
+    );
 
     const ageInput = screen.getByTestId("age-input");
     fireEvent.change(ageInput, { target: { value: "30" } });
 
-    expect(screen.getByTestId("result-count")).toHaveTextContent("Found 2 users");
+    expect(screen.getByTestId("result-count")).toHaveTextContent(
+      "Found 2 users",
+    );
   });
 
   test("clears search filter when input is cleared", async () => {
